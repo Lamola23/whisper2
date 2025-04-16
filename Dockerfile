@@ -1,11 +1,12 @@
 FROM python:3.10-slim
 
-WORKDIR /app
+RUN apt-get update && apt-get install -y ffmpeg git && apt-get clean
 
-COPY requirements.txt .
+WORKDIR /app
+COPY . .
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY main.py ./main.py
+EXPOSE 8080
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
-
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
