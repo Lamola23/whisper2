@@ -1,21 +1,13 @@
-from fastapi import FastAPI, UploadFile, File
-import whisper
-import shutil
-import os
-print("🚀 FastAPI is starting up...")
+from fastapi import FastAPI
+import uvicorn
 
 app = FastAPI()
 
+@app.get("/")
+def read_root():
+    return {"message": "Whisper API funcionando ✅"}
 
-@app.post("/transcribe")
-async def transcribe(file: UploadFile = File(...)):
-    model = whisper.load_model("tiny")
-    temp_path = f"temp_{file.filename}"
-    
-    with open(temp_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+if __name__ == "__main__":
+    print("🔊 Lanzando Uvicorn...")
+    uvicorn.run(app, host="0.0.0.0", port=8080)
 
-    result = model.transcribe(temp_path)
-    os.remove(temp_path)
-
-    return {"text": result["text"]}
